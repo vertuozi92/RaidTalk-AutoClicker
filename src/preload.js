@@ -1,6 +1,8 @@
 const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('raidtalk', {
   loadSettings:()=>ipcRenderer.invoke('load-settings'),
+  exportSettings:()=>ipcRenderer.invoke('backup:export'),
+  importSettings:()=>ipcRenderer.invoke('backup:import'),
   saveSettings:(i,s)=>ipcRenderer.invoke('save-settings',i,s),
   startClicker:(id,i)=>ipcRenderer.invoke('start-clicker',id,i),
   stopClicker:id=>ipcRenderer.invoke('stop-clicker',id),
