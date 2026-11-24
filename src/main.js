@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, webContents } = require('electron');
+const { app, BrowserWindow, ipcMain, webContents, dialog } = require('electron');
 const path = require('node:path');
 const fs = require('node:fs');
 const { autoUpdater } = require('electron-updater');
@@ -97,6 +97,30 @@ ipcMain.handle('updater:check',async()=>{
   finally{updateCheckInProgress=false;}
 });
 ipcMain.handle('updater:install',()=>{if(!app.isPackaged)return {ok:false};autoUpdater.quitAndInstall();return {ok:true};});
+ipcMain.handle('backup:export',async()=>{
+  const payload={format:'raidtalk-autoclicker-settings',version:1,exportedAt:new Date().toISOString(),tabs:tabSettings};
+  const result=await dialog.showSaveDialog(win,{title:'Резервная копия настроек',defaultPath:'RaidTalk-AutoClicker-settings.json',filters:[{name:'JSON',extensions:['json']}]});
+  if(result.canceled||!result.filePath)return {ok:false,canceled:true};
+  try{fs.writeFileSync(result.filePath,JSON.stringify(payload,null,2),'utf8');return {ok:true,filePath:result.filePath};}
+  catch(e){return {ok:false,error:e.message};}
+});
+ipcMain.handle('backup:import',async()=>{
+  const result=await dialog.showOpenDialog(win,{title:'Восстановить настройки',properties:['openFile'],filters:[{name:'JSON',extensions:['json']}]});
+  if(result.canceled||!result.filePaths?.[0])return {ok:false,canceled:true};
+  try{
+    const payload=JSON.parse(fs.readFileSync(result.filePaths[0],'utf8'));
+    if(payload.format!=='raidtalk-autoclicker-settings'||payload.version!==1||!Array.isArray(payload.tabs)||payload.tabs.length!==TAB_COUNT)
+      return {ok:false,error:'Файл не является резервной копией настроек RaidTalk AutoClicker.'};
+    for(let i=0;i<TAB_COUNT;i++){
+      const s=payload.tabs[i]||{};
+      if(!Number.isFinite(s.x)||!Number.isFinite(s.y)||!Number.isFinite(s.interval))
+        return {ok:false,error:'В резервной копии обнаружены некорректные настройки.'};
+      tabSettings[i]={x:Math.max(0,Math.min(10000,Math.round(s.x))),y:Math.max(0,Math.min(10000,Math.round(s.y))),interval:Math.max(MIN_INTERVAL_MS,Math.min(3600000,Math.round(s.interval)))};
+    }
+    saveSettings();
+    return {ok:true,settings:tabSettings};
+  }catch(e){return {ok:false,error:e.message};}
+});
 ipcMain.handle('load-settings',()=>tabSettings);
 ipcMain.handle('save-settings',(_e,index,settings)=>{
   const i=Number(index); if(!Number.isInteger(i)||i<0||i>=TAB_COUNT) return {ok:false};
