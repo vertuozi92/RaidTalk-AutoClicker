@@ -2,7 +2,7 @@ const COUNT=20, START='https://app.raidtalk.ru';
 const SB=window.ALBEDO_SUPABASE;
 const SESSION_KEY='albedo-auth-session-v1';
 const AUTH_REDIRECT='albedo-raidtalk://auth/callback';
-let licenseSession=null;
+let licenseSession=null;\nlet currentLicense=null;
 function authMessage(message){
   const el=$('auth-message');if(!el)return;
   const raw=String(message||'');
@@ -114,7 +114,28 @@ async function finishLicenseLogin(session){
   await startApplication();
 }
 
-const $=id=>document.getElementById(id);
+const $=id=>document.getElementById(id);\n
+// Subscription and license window (display-only until payments are connected).
+function openLicenseWindow(){
+  const modal=$('license-modal');
+  if(!modal)return;
+  const status=$('license-status');
+  if(!licenseSession){
+    status.textContent='Войдите в аккаунт, чтобы посмотреть состояние лицензии.';
+  }else if(currentLicense?.status==='trial'){
+    status.textContent='Статус: пробный период · осталось дней: '+(currentLicense.days_remaining??'—');
+  }else if(currentLicense?.valid){
+    status.textContent='Статус: подписка активна'+(currentLicense.expires_at?' до '+new Date(currentLicense.expires_at).toLocaleDateString('ru-RU'):'');
+  }else{
+    status.textContent='Статус лицензии пока не подтверждён.';
+  }
+  modal.style.display='flex';
+}
+$('license-open-auth').onclick=openLicenseWindow;
+$('license-open-app').onclick=openLicenseWindow;
+$('license-close').onclick=()=>{$('license-modal').style.display='none';};
+$('license-modal').addEventListener('click',e=>{if(e.target===$('license-modal'))$('license-modal').style.display='none';});
+
 let selected=0, tabs=[], settings=[], readyCount=0;
 let effectsDisabled = localStorage.getItem('raidtalk-effects-disabled') !== 'false';
 let darkThemeEnabled = localStorage.getItem('raidtalk-dark-theme') !== 'false';
