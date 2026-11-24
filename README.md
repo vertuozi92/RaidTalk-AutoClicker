@@ -31,12 +31,13 @@ RaidTalk AutoClicker is an Electron desktop application that opens RaidTalk in a
 - **Dark page styling** and reduced page animations
 - **Tab controls** to refresh the current tab or all tabs
 - **Local settings storage** between application sessions
+- **JSON backup and restore** for settings across all 20 tabs
 - **Windows installer** built with electron-builder (NSIS)
 
 ## Download and install
 
 1. Open the [latest release](https://github.com/vertuozi92/RaidTalk-AutoClicker/releases/latest).
-2. Download `RaidTalk-AutoClicker-Setup-1.3.0.exe` (or the installer attached to the newest release).
+2. Download the installer attached to the latest release.
 3. Run the installer and follow the setup steps.
 4. Launch **RaidTalk AutoClicker** from the Start menu or desktop shortcut.
 
