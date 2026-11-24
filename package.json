@@ -1,6 +1,6 @@
 {
   "name": "raidtalk-autoclicker",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "RaidTalk browser workspace with 20 persistent profiles, page click picker and GitHub auto-updates",
   "main": "src/main.js",
   "author": "ALBEDO",
