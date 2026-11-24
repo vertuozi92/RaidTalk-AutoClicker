@@ -2,6 +2,8 @@
 
 <img src="albedo-logo.png" alt="ALBEDO original logo" width="180">
 
+<img src="raidtalk-autoclicker-preview.png" alt="RaidTalk AutoClicker application screenshot" width="100%">
+
 # RaidTalk AutoClicker
 
 **Windows desktop workspace for RaidTalk with 20 browser tabs and per-tab auto-click settings.**
