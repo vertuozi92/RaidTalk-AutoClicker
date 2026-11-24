@@ -15,7 +15,8 @@
     "electron-builder": "26.0.12"
   },
   "dependencies": {
-    "electron-updater": "6.6.2"
+    "electron-updater": "6.6.2",
+    "@supabase/supabase-js": "^2.57.0"
   },
   "build": {
     "appId": "ru.albedo.raidtalk.autoclicker",
