@@ -3,6 +3,49 @@ const path = require('node:path');
 const fs = require('node:fs');
 const { autoUpdater } = require('electron-updater');
 
+// Deep link used for email confirmation from Supabase.
+const AUTH_PROTOCOL = 'albedo-raidtalk';
+let pendingAuthUrl = null;
+const gotSingleInstanceLock = app.requestSingleInstanceLock();
+if (!gotSingleInstanceLock) app.quit();
+function findAuthUrl(args) {
+  return (args || []).find(value => typeof value === 'string' && value.startsWith(AUTH_PROTOCOL + '://')) || null;
+}
+function deliverAuthUrl(rawUrl) {
+  if (!rawUrl || !rawUrl.startsWith(AUTH_PROTOCOL + '://')) return;
+  pendingAuthUrl = rawUrl;
+  if (win && !win.isDestroyed() && win.webContents.isLoading() === false) {
+    win.webContents.send('auth:callback', rawUrl);
+    pendingAuthUrl = null;
+  } else if (win && !win.isDestroyed()) {
+    win.webContents.once('did-finish-load', () => {
+      if (pendingAuthUrl) {
+        win.webContents.send('auth:callback', pendingAuthUrl);
+        pendingAuthUrl = null;
+      }
+    });
+  }
+}
+if (gotSingleInstanceLock) {
+  if (process.defaultApp && process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient(AUTH_PROTOCOL, process.execPath, [path.resolve(process.argv[1])]);
+  } else {
+    app.setAsDefaultProtocolClient(AUTH_PROTOCOL);
+  }
+  app.on('second-instance', (_event, commandLine) => {
+    deliverAuthUrl(findAuthUrl(commandLine));
+    if (win && !win.isDestroyed()) {
+      if (win.isMinimized()) win.restore();
+      win.focus();
+    }
+  });
+  app.on('open-url', (event, url) => {
+    event.preventDefault();
+    deliverAuthUrl(url);
+  });
+}
+
+
 const START_URL = 'https://app.raidtalk.ru';
 const TAB_COUNT = 20;
 const MIN_INTERVAL_MS = 250;
@@ -86,6 +129,10 @@ function createWindow(){
     }
   });
   win.loadFile(path.join(__dirname,'index.html'));
+  win.webContents.on('did-finish-load', () => {
+    const launchUrl = findAuthUrl(process.argv);
+    if (pendingAuthUrl || launchUrl) deliverAuthUrl(pendingAuthUrl || launchUrl);
+  });
   win.on('closed',()=>{ for(const id of [...clickers.keys()]) stop(id); win=null; });
 }
 ipcMain.handle('updater:check',async()=>{
@@ -175,6 +222,6 @@ ipcMain.handle('stop-all',()=>{
   for(const id of [...clickers.keys()]){stop(id);sendToUI('clicker-state',{id,running:false});}
   return {ok:true};
 });
-app.whenReady().then(()=>{configureAutoUpdater();createWindow();if(app.isPackaged){setTimeout(()=>autoUpdater.checkForUpdates().catch(()=>{}),10000);setInterval(()=>autoUpdater.checkForUpdates().catch(()=>{}),6*60*60*1000);}});
+app.whenReady().then(()=>{if (!gotSingleInstanceLock) return; configureAutoUpdater();createWindow();if(app.isPackaged){setTimeout(()=>autoUpdater.checkForUpdates().catch(()=>{}),10000);setInterval(()=>autoUpdater.checkForUpdates().catch(()=>{}),6*60*60*1000);}});
 app.on('window-all-closed',()=>{if(process.platform!=='darwin')app.quit();});
 app.on('before-quit',()=>{for(const id of [...clickers.keys()])stop(id);});
