@@ -14,5 +14,6 @@ contextBridge.exposeInMainWorld('raidtalk', {
   checkForUpdates:()=>ipcRenderer.invoke('updater:check'),
   installUpdate:()=>ipcRenderer.invoke('updater:install'),
   onUpdaterStatus:cb=>ipcRenderer.on('updater:status',(_e,s)=>cb(s)),
-  onAuthCallback:cb=>ipcRenderer.on('auth:callback',(_e,url)=>cb(url))
+  onAuthCallback:cb=>ipcRenderer.on('auth:callback',(_e,url)=>cb(url)),
+  openExternal:url=>ipcRenderer.invoke('open-external',url)
 });
