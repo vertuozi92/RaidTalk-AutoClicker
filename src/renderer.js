@@ -7,7 +7,7 @@ function authMessage(message){
   const el=$('auth-message');if(!el)return;
   const raw=String(message||'');
   el.textContent=/email rate limit exceeded/i.test(raw)
-    ? 'Превышен лимит отправки писем Supabase. Встроенная почта позволяет отправлять до 2 писем в час на весь проект. Подождите и попробуйте позже. Не запрашивайте письмо повторно много раз подряд.'
+    ? 'Не удалось отправить письмо. Попробуйте ещё раз через час.'
     : raw;
 }
 async function sbRequest(path,options={}){
