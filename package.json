@@ -1,0 +1,57 @@
+{
+  "name": "raidtalk-autoclicker",
+  "version": "1.3.0",
+  "description": "RaidTalk browser workspace with 20 persistent profiles, page click picker and GitHub auto-updates",
+  "main": "src/main.js",
+  "author": "ALBEDO",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis x64",
+    "publish": "electron-builder --win nsis x64 --publish always"
+  },
+  "devDependencies": {
+    "electron": "33.4.11",
+    "electron-builder": "26.0.12"
+  },
+  "dependencies": {
+    "electron-updater": "6.6.2"
+  },
+  "build": {
+    "appId": "ru.albedo.raidtalk.autoclicker",
+    "productName": "RaidTalk AutoClicker",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "vertuozi92",
+        "repo": "RaidTalk-AutoClicker",
+        "releaseType": "release"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "RaidTalk-AutoClicker-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "RaidTalk AutoClicker"
+    }
+  }
+}
