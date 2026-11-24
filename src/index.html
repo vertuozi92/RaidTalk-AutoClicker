@@ -32,7 +32,7 @@ body.auth-locked header,body.auth-locked #browser-area{visibility:hidden}
 #license-modal{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;background:#05080dcc;padding:20px}
 #license-panel{width:min(760px,100%);background:#171e2b;border:1px solid #394a63;border-radius:18px;padding:24px;box-shadow:0 24px 80px #000b}
 #license-panel h2{margin:0 0 6px;font-size:24px}#license-panel p{color:#aebbd0}
-.license-plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
+.license-plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
 .license-plan{background:#101722;border:1px solid #35445b;border-radius:12px;padding:18px}
 .license-price{font-size:27px;font-weight:700;margin:12px 0}
 .license-muted{color:#9eacc1;font-size:12px}
@@ -77,6 +77,6 @@ body.auth-locked header,body.auth-locked #browser-area{visibility:hidden}
   <span id="status">Инициализация…</span>
  </div>
 </header>
-<div id="browser-area"></div>\n<div id="license-modal" role="dialog" aria-modal="true" aria-labelledby="license-title"><div id="license-panel"><button id="license-close">Закрыть ✕</button><h2 id="license-title">Лицензия ALBEDO</h2><p id="license-status">Проверяем статус лицензии…</p><div class="license-plans"><div class="license-plan"><strong>Подписка на 30 дней</strong><div class="license-price">299 ₽</div><div class="license-muted">Доступ ко всем функциям программы</div><button disabled style="width:100%;margin-top:16px">Покупка скоро</button></div><div class="license-plan"><strong>Подписка на 365 дней</strong><div class="license-price">1 999 ₽</div><div class="license-muted">Год доступа ко всем функциям</div><button disabled style="width:100%;margin-top:16px">Покупка скоро</button></div></div><p class="license-muted">Оплата пока не подключена. Кнопки покупки станут активны после подключения платёжной системы.</p></div></div>
+<div id="browser-area"></div>\n<div id="license-modal" role="dialog" aria-modal="true" aria-labelledby="license-title"><div id="license-panel"><button id="license-close">Закрыть ✕</button><h2 id="license-title">Лицензия ALBEDO</h2><p id="license-status">Проверяем статус лицензии…</p><div class="license-plans"><div class="license-plan"><strong>30 дней</strong><div class="license-price">149 ₽</div><div class="license-muted">Полный доступ ко всем функциям</div><button disabled style="width:100%;margin-top:16px">Скоро</button></div><div class="license-plan"><strong>90 дней</strong><div class="license-price">399 ₽</div><div class="license-muted">Полный доступ ко всем функциям</div><button disabled style="width:100%;margin-top:16px">Скоро</button></div><div class="license-plan"><strong>365 дней</strong><div class="license-price">999 ₽</div><div class="license-muted">Полный доступ ко всем функциям</div><button disabled style="width:100%;margin-top:16px">Скоро</button></div></div><p class="license-muted">Оплата пока не подключена. Кнопки покупки станут активны после подключения платёжной системы.</p></div></div>
 <script src="supabase-config.js"></script><script src="renderer.js"></script>
 </body></html>
