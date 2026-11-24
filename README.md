@@ -1,58 +1,91 @@
+<div align="center">
+
 # RaidTalk AutoClicker
 
-Windows desktop application built with Electron for working with RaidTalk in a multi-tab workspace.
+**Windows desktop workspace for RaidTalk with 20 browser tabs and per-tab auto-click settings.**
 
-## Version
+[![Latest Release](https://img.shields.io/github/v/release/vertuozi92/RaidTalk-AutoClicker?display_name=tag)](https://github.com/vertuozi92/RaidTalk-AutoClicker/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/vertuozi92/RaidTalk-AutoClicker/total)](https://github.com/vertuozi92/RaidTalk-AutoClicker/releases)
+[![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-blue)](https://github.com/vertuozi92/RaidTalk-AutoClicker/releases/latest)
 
-**1.3.0 — 20 tabs**
+[Download for Windows](https://github.com/vertuozi92/RaidTalk-AutoClicker/releases/latest) · [Report a problem](https://github.com/vertuozi92/RaidTalk-AutoClicker/issues)
+
+</div>
+
+---
+
+## Overview
+
+RaidTalk AutoClicker is an Electron desktop application that opens RaidTalk in a workspace of 20 tabs. Each tab has its own click coordinates and interval settings.
 
 ## Features
 
-- 20 browser tabs with independent settings
-- Per-tab click interval and click coordinates
-- Page point picker
-- Yellow visual click indicator
-- Dark page styling and reduced page animations
-- Refresh current tab and refresh all tabs
-- Settings stored locally by the application
-- GitHub-based update channel configuration
+- **20 browser tabs** with independent per-tab settings
+- **Per-tab auto-clicker** with configurable coordinates and interval
+- **Page point picker** to select a click position
+- **Visual click indicator** to make click activity easier to see
+- **Dark page styling** and reduced page animations
+- **Tab controls** to refresh the current tab or all tabs
+- **Local settings storage** between application sessions
+- **Windows installer** built with electron-builder (NSIS)
 
-## Requirements
+## Download and install
 
-- Windows 10/11 (64-bit)
-- Node.js and npm for running from source
-- Internet connection to load RaidTalk
+1. Open the [latest release](https://github.com/vertuozi92/RaidTalk-AutoClicker/releases/latest).
+2. Download `RaidTalk-AutoClicker-Setup-1.3.0.exe` (or the installer attached to the newest release).
+3. Run the installer and follow the setup steps.
+4. Launch **RaidTalk AutoClicker** from the Start menu or desktop shortcut.
+
+**System:** Windows 10/11, 64-bit. An internet connection is required to load RaidTalk.
 
 ## Run from source
+
+Install a current Node.js LTS release, then run these commands in the project folder:
 
 ```bash
 npm install
 npm start
 ```
 
-## Build Windows installer
+## Build the Windows installer
 
 ```bash
 npm install
 npm run dist
 ```
 
-The installer is generated in the `release` directory.
+The NSIS installer is generated in the `release` folder.
 
-## Project files
+You can also run `BUILD_INSTALLER.bat` on Windows.
 
-- `src/main.js` — Electron main process
-- `src/preload.js` — secure bridge between Electron and UI
-- `src/index.html` — application interface
-- `src/renderer.js` — tabs, settings and clicker UI
-- `package.json` — dependencies and build configuration
+## Project structure
 
-## Notes
+```text
+src/
+  main.js       Electron main process
+  preload.js    Secure renderer bridge
+  index.html    Application interface
+  renderer.js   Tabs, settings and clicker interface
+package.json    Dependencies and build configuration
+```
 
-This repository contains the application source. Do not commit personal credentials, local settings, `node_modules`, or generated installer files.
+## Usage notes
 
-Use the application only with accounts and pages you are authorized to access. Automatic group rejoining must not bypass access controls or submit membership requests without the user's action.
+- Choose a tab, set its click position and interval, then start or stop that tab's clicker.
+- Use the point picker only on a page area where clicking will not submit, purchase, delete, send, or otherwise trigger an unintended action.
+- The computer and application must remain running for background activity; a powered-off or sleeping computer cannot perform clicks.
+- Use the app only with accounts and pages you are authorized to access. It does not grant access to restricted groups or content.
+
+## Troubleshooting
+
+- If the app does not start from source, check that Node.js LTS is installed and run `npm install` again.
+- If installer creation fails, run `BUILD_INSTALLER.bat` from the project folder and review the final error shown in the console.
+- For bugs or feature requests, [open a GitHub issue](https://github.com/vertuozi92/RaidTalk-AutoClicker/issues).
+
+## Language
+
+Russian quick-start notes are available in [README_RU.txt](README_RU.txt).
 
 ## License
 
-UNLICENSED — all rights reserved unless the repository owner states otherwise.
+This repository is currently marked **UNLICENSED**. All rights are reserved by the repository owner unless a separate license is added.
