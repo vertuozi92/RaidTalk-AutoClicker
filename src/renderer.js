@@ -389,6 +389,21 @@ $('open').onclick=()=>{
   catch(e){alert('Введите корректную HTTPS-ссылку.');}
 };
 $('save').onclick=async()=>{await saveCurrent();$('status').textContent='Настройки вкладки сохранены';};
+$('backupExport').onclick=async()=>{
+  for(let i=0;i<COUNT;i++)await window.raidtalk.saveSettings(i,settings[i]);
+  const result=await window.raidtalk.exportSettings();
+  if(result.ok)$('status').textContent='Резервная копия 20 вкладок сохранена';
+  else if(!result.canceled)alert('Не удалось сохранить резервную копию: '+(result.error||'неизвестная ошибка'));
+};
+$('backupImport').onclick=async()=>{
+  const result=await window.raidtalk.importSettings();
+  if(result.ok){
+    settings=result.settings;
+    selectTab(selected);
+    $('status').textContent='Настройки всех 20 вкладок восстановлены';
+    alert('Настройки всех 20 вкладок восстановлены. Перезапустите программу, если хотите применить их к уже открытым сеансам.');
+  }else if(!result.canceled)alert('Не удалось восстановить настройки: '+(result.error||'неизвестная ошибка'));
+};
 $('pick').onclick=async()=>{
   const view=tabs[selected].view;
   if(!view.getURL().startsWith('https://app.raidtalk.ru')){alert('Выбор точки доступен на app.raidtalk.ru');return;}
