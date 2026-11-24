@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: https:; script-src 'self' 'unsafe-inline';">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>RaidTalk AutoClicker</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#10131b;color:#edf1fa;font:14px Segoe UI,Arial,sans-serif;overflow:hidden}
+header{height:174px;padding:11px 16px;background:#171c27;border-bottom:1px solid #30394b;position:relative;z-index:10}
+.top{display:flex;align-items:center;justify-content:flex-end;margin-bottom:9px;min-height:34px;position:relative}.brand-group{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;white-space:nowrap}.brand{font-size:20px;font-weight:700}.update-btn{background:#315d83;border:1px solid #527da5;padding:8px 12px;font-size:12px}.update-btn.checking{opacity:.7;cursor:wait}.update-btn.ready{background:#16875a;border-color:#27c281}
+.actions,.toolbar{display:flex;align-items:center;gap:7px}
+.icon-btn{width:34px;height:34px;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:21px;line-height:1;background:#293447;border:1px solid #46536a;border-radius:8px;flex:0 0 auto}.icon-btn:hover{background:#3a4b66}
+button{border:0;border-radius:7px;padding:8px 11px;background:#2d3a50;color:#fff;cursor:pointer;font-weight:600;white-space:nowrap}
+button:hover{filter:brightness(1.15)}button:disabled{opacity:.5;cursor:default}.green{background:#16875a}.red{background:#a43b47}.gold{background:#9b7610}
+.tabs{display:flex;flex-wrap:nowrap;gap:5px;overflow-x:auto;margin-bottom:9px;padding-bottom:3px}
+.tab{flex:1;min-width:44px;padding:8px 3px;text-align:center;background:#252e3d;border:1px solid #344157;border-radius:7px;cursor:pointer;font-size:12px;white-space:nowrap}
+.tab.active{background:#35547d;border-color:#79a8e7}.tab.running{box-shadow:inset 0 -3px #27c281}
+.toolbar input{background:#0e131c;border:1px solid #3b465a;border-radius:7px;color:white;padding:8px 9px;outline:none}
+#url{flex:1;min-width:180px}.toolbar input:focus{border-color:#6b9ce3}
+.settings{display:flex;gap:6px;align-items:center}.settings label{font-size:11px;color:#afbdd1;white-space:nowrap}.settings input{width:65px}
+#status{margin-left:auto;color:#c5d0df;font-size:12px;white-space:nowrap}
+#browser-area{position:absolute;left:0;right:0;top:174px;bottom:0;background:#fff}
+webview{position:absolute;inset:0;width:100%;height:100%;background:#fff;border:0}
+webview.hidden{visibility:hidden;pointer-events:none}
+</style></head><body>
+<header>
+ <div class="top"><div class="brand-group"><div class="brand">✦ RAIDTALK AUTOCLICKER <span style="font-size:12px;color:#9aa9be;font-weight:400">/ 20 вкладок</span></div><button id="checkUpdates" class="update-btn" title="Проверить наличие новой версии программы">⟳ Проверить обновления</button></div>
+ <div class="actions"><button class="icon-btn" id="reloadCurrent" title="Обновить выбранную вкладку" aria-label="Обновить выбранную вкладку">↻</button><button class="icon-btn" id="reloadAll" title="Обновить все 20 вкладок" aria-label="Обновить все вкладки">⟳</button><button id="autoRejoin" class="gold" title="Автоматически восстановить вход в группу после временного сбоя">Автовозврат: ВКЛ</button><button class="green" id="startAll">▶ Старт всех</button><button class="red" id="stopAll">■ Стоп всех</button></div></div>
+ <div class="tabs" id="tabs"></div>
+ <div class="toolbar">
+  <input id="url" value="https://app.raidtalk.ru" aria-label="Адрес страницы">
+  <button id="open">Открыть</button>
+  <div class="settings">
+   <label>X <input id="x" type="number" min="0" value="500"></label>
+   <label>Y <input id="y" type="number" min="0" value="400"></label>
+   <label>Интервал мс <input id="interval" type="number" min="250" value="5000"></label>
+  </div>
+ </div>
+ <div class="toolbar" style="margin-top:7px">
+  <button class="gold" id="pick">✛ Pick on page — выбрать точку</button>
+  <button id="effects" title="Отключает анимации, свечения, тени и размытие страницы">Эффекты: ВЫКЛ</button>
+  <button id="darkTheme" title="Включает тёмный фон и светлый текст на странице RaidTalk">Тёмная тема: ВКЛ</button>
+  <button id="test">Проверить клик</button><button id="save">Сохранить</button>
+  <button class="green" id="start">▶ Старт</button><button class="red" id="stop">■ Стоп</button>
+  <span id="status">Инициализация…</span>
+ </div>
+</header>
+<div id="browser-area"></div>
+<script src="renderer.js"></script>
+</body></html>
