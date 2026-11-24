@@ -138,6 +138,64 @@ $('license-open-auth').onclick=openLicenseWindow;
 $('license-open-app').onclick=openLicenseWindow;
 $('license-close').onclick=()=>{$('license-modal').style.display='none';};
 $('license-modal').addEventListener('click',e=>{if(e.target===$('license-modal'))$('license-modal').style.display='none';});
+const PAYMENT_FUNCTION='create-payment';
+function paymentMessage(message){
+  const el=$('payment-message');
+  if(el)el.textContent=message;
+}
+async function startSubscriptionPayment(planCode,button){
+  if(!licenseSession?.access_token){
+    paymentMessage('Сначала войдите в аккаунт.');
+    return;
+  }
+  const oldText=button?.textContent;
+  if(button){button.disabled=true;button.textContent='Создаём платёж…';}
+  paymentMessage('Обращаемся к тестовой ЮKassa…');
+  try{
+    const response=await fetch(SB.url+'/functions/v1/'+PAYMENT_FUNCTION,{
+      method:'POST',
+      headers:{
+        apikey:SB.publishableKey,
+        Authorization:'Bearer '+licenseSession.access_token,
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({plan_code:planCode})
+    });
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.error||'Не удалось создать платёж');
+    if(!data.payment_url)throw new Error('ЮKassa не вернула ссылку на оплату');
+    paymentMessage('Платёж создан. Открываем страницу ЮKassa…');
+    await window.raidtalk.openExternal(data.payment_url);
+  }catch(error){
+    paymentMessage('Ошибка оплаты: '+error.message);
+  }finally{
+    if(button){button.disabled=false;button.textContent=oldText;}
+  }
+}
+document.querySelectorAll('.license-buy').forEach(button=>{
+  button.addEventListener('click',()=>startSubscriptionPayment(button.dataset.plan,button));
+});
+$('license-refresh').onclick=async()=>{
+  if(!licenseSession){paymentMessage('Сначала войдите в аккаунт.');return;}
+  const button=$('license-refresh');button.disabled=true;
+  paymentMessage('Проверяем статус лицензии…');
+  try{
+    const fresh=await refreshSession();
+    if(!fresh)throw new Error('Сессия истекла. Войдите снова.');
+    licenseSession=fresh;
+    const license=await verifyLicense(fresh);
+    currentLicense=license;
+    $('license-status').textContent=license.status==='trial'
+      ? 'Статус: пробный период · осталось дней: '+(license.days_remaining??'—')
+      : license.valid
+        ? 'Статус: подписка активна'+(license.expires_at?' до '+new Date(license.expires_at).toLocaleDateString('ru-RU'):'')
+        : (license.message||'Лицензия пока не активна.');
+    if(license.valid)paymentMessage('Лицензия обновлена.');
+    else paymentMessage('Оплата ещё не подтверждена. Подождите немного и проверьте снова.');
+  }catch(error){paymentMessage('Не удалось проверить лицензию: '+error.message);}
+  finally{button.disabled=false;}
+};
+
 
 let selected=0, tabs=[], settings=[], readyCount=0;
 let effectsDisabled = localStorage.getItem('raidtalk-effects-disabled') !== 'false';
