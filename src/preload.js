@@ -13,5 +13,6 @@ contextBridge.exposeInMainWorld('raidtalk', {
   onPointPicked:cb=>ipcRenderer.on('point-picked',(_e,s)=>cb(s)),
   checkForUpdates:()=>ipcRenderer.invoke('updater:check'),
   installUpdate:()=>ipcRenderer.invoke('updater:install'),
-  onUpdaterStatus:cb=>ipcRenderer.on('updater:status',(_e,s)=>cb(s))
+  onUpdaterStatus:cb=>ipcRenderer.on('updater:status',(_e,s)=>cb(s)),
+  onAuthCallback:cb=>ipcRenderer.on('auth:callback',(_e,url)=>cb(url))
 });
