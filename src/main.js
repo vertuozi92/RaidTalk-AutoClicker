@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, webContents, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, webContents, dialog, shell } = require('electron');
 const path = require('node:path');
 const fs = require('node:fs');
 const { autoUpdater } = require('electron-updater');
@@ -135,6 +135,15 @@ function createWindow(){
   });
   win.on('closed',()=>{ for(const id of [...clickers.keys()]) stop(id); win=null; });
 }
+ipcMain.handle('open-external',async(_event,rawUrl)=>{
+  try{
+    const url=new URL(String(rawUrl));
+    if(url.protocol!=='https:'||url.hostname!=='yookassa.ru'&&!url.hostname.endsWith('.yookassa.ru'))
+      return {ok:false,error:'Разрешено открывать только страницы ЮKassa.'};
+    await shell.openExternal(url.toString());
+    return {ok:true};
+  }catch(e){return {ok:false,error:e.message};}
+});
 ipcMain.handle('updater:check',async()=>{
   if(!app.isPackaged)return {ok:false,message:'Проверка обновлений доступна в установленной версии программы.'};
   if(updateCheckInProgress)return {ok:false,message:'Проверка уже выполняется.'};
