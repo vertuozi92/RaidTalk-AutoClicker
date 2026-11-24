@@ -1,4 +1,84 @@
 const COUNT=20, START='https://app.raidtalk.ru';
+const SB=window.ALBEDO_SUPABASE;
+const SESSION_KEY='albedo-auth-session-v1';
+let licenseSession=null;
+function authMessage(message){const el=$('auth-message');if(el)el.textContent=message;}
+async function sbRequest(path,options={}){
+  const response=await fetch(SB.url+path,{...options,headers:{
+    apikey:SB.publishableKey,'Content-Type':'application/json',
+    ...(options.headers||{})
+  }});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(data.msg||data.message||data.error_description||data.error||'Ошибка запроса Supabase');
+  return data;
+}
+function saveSession(session){licenseSession=session;localStorage.setItem(SESSION_KEY,JSON.stringify(session));}
+async function refreshSession(){
+  const raw=localStorage.getItem(SESSION_KEY);if(!raw)return null;
+  try{
+    const old=JSON.parse(raw);
+    if(old.expires_at && old.expires_at*1000>Date.now()+60000)return old;
+    if(!old.refresh_token)return null;
+    const fresh=await sbRequest('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:old.refresh_token})});
+    fresh.expires_at=Math.floor(Date.now()/1000)+(fresh.expires_in||3600);saveSession(fresh);return fresh;
+  }catch(e){localStorage.removeItem(SESSION_KEY);return null;}
+}
+async function verifyLicense(session){
+  const result=await fetch(SB.url+'/functions/v1/'+SB.licenseFunction,{
+    method:'POST',
+    headers:{apikey:SB.publishableKey,Authorization:'Bearer '+session.access_token,'Content-Type':'application/json'},
+    body:JSON.stringify({})
+  });
+  const data=await result.json().catch(()=>({}));
+  if(!result.ok)throw new Error(data.error||data.message||'Не удалось проверить лицензию');
+  return data;
+}
+function showLicenseFailure(data){
+  document.body.classList.add('auth-locked');
+  $('auth-intro').textContent='Аккаунт: '+(licenseSession?.user?.email||'');
+  $('auth-message').textContent=data.message||'Лицензия не активна. Оформите подписку.';
+  $('auth-login').style.display='none';$('auth-signup').style.display='none';
+  $('auth-logout').style.display='block';
+  $('auth-logout').onclick=()=>{localStorage.removeItem(SESSION_KEY);licenseSession=null;location.reload();};
+}
+async function initializeLicense(){
+  $('auth-login').onclick=async()=>{
+    const email=$('auth-email').value.trim(),password=$('auth-password').value;
+    if(!email||!password){authMessage('Введите Email и пароль.');return;}
+    try{
+      authMessage('Выполняется вход…');
+      const session=await sbRequest('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email,password})});
+      session.expires_at=Math.floor(Date.now()/1000)+(session.expires_in||3600);saveSession(session);
+      await finishLicenseLogin(session);
+    }catch(e){authMessage(e.message);}
+  };
+  $('auth-signup').onclick=async()=>{
+    const email=$('auth-email').value.trim(),password=$('auth-password').value;
+    if(!email||password.length<8){authMessage('Введите Email и пароль не короче 8 символов.');return;}
+    try{
+      authMessage('Создаём аккаунт…');
+      const data=await sbRequest('/auth/v1/signup',{method:'POST',body:JSON.stringify({email,password})});
+      if(data.access_token){
+        data.expires_at=Math.floor(Date.now()/1000)+(data.expires_in||3600);saveSession(data);
+        await finishLicenseLogin(data);
+      }else authMessage('Аккаунт создан. Подтвердите Email по ссылке из письма, затем войдите.');
+    }catch(e){authMessage(e.message);}
+  };
+  const session=await refreshSession();
+  if(session){try{await finishLicenseLogin(session);}catch(e){authMessage(e.message);}}
+}
+async function finishLicenseLogin(session){
+  licenseSession=session;
+  authMessage('Проверяем лицензию…');
+  const license=await verifyLicense(session);
+  if(!license.valid){showLicenseFailure(license);return;}
+  document.body.classList.remove('auth-locked');
+  $('auth-gate').style.display='none';
+  $('status').textContent=license.status==='trial'
+    ? 'ALBEDO: пробный период · осталось дней: '+(license.days_remaining??'—')
+    : 'ALBEDO: подписка активна до '+new Date(license.expires_at).toLocaleDateString('ru-RU');
+}
+
 const $=id=>document.getElementById(id);
 let selected=0, tabs=[], settings=[], readyCount=0;
 let effectsDisabled = localStorage.getItem('raidtalk-effects-disabled') !== 'false';
@@ -448,6 +528,8 @@ window.raidtalk.onClickerState(s=>{
   if(t){t.running=s.running;updateStatus();}
 });
 (async()=>{
+  await initializeLicense();
+  if(document.body.classList.contains('auth-locked'))return;
   settings=await window.raidtalk.loadSettings();
   while(settings.length<COUNT)settings.push({x:500,y:400,interval:5000});
   makeTabs();selectTab(0);updateEffectsButton();updateDarkThemeButton();updateAutoRejoinButton();
