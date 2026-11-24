@@ -164,8 +164,10 @@ async function startSubscriptionPayment(planCode,button){
     const data=await response.json().catch(()=>({}));
     if(!response.ok)throw new Error(data.error||'Не удалось создать платёж');
     if(!data.payment_url)throw new Error('ЮKassa не вернула ссылку на оплату');
-    paymentMessage('Платёж создан. Открываем страницу ЮKassa…');
-    await window.raidtalk.openExternal(data.payment_url);
+    paymentMessage('Платёж создан. Открываю страницу оплаты в браузере…');
+    const opened=await window.raidtalk.openExternal(data.payment_url);
+    if(!opened?.ok)throw new Error(opened?.error||'Не удалось открыть браузер с оплатой.');
+    paymentMessage('Страница оплаты открыта в браузере. Завершите покупку и вернитесь сюда для проверки лицензии.');
   }catch(error){
     paymentMessage('Ошибка оплаты: '+error.message);
   }finally{
