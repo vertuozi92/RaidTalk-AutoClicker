@@ -77,6 +77,7 @@ async function finishLicenseLogin(session){
   $('status').textContent=license.status==='trial'
     ? 'ALBEDO: пробный период · осталось дней: '+(license.days_remaining??'—')
     : 'ALBEDO: подписка активна до '+new Date(license.expires_at).toLocaleDateString('ru-RU');
+  await startApplication();
 }
 
 const $=id=>document.getElementById(id);
@@ -527,9 +528,10 @@ window.raidtalk.onClickerState(s=>{
   const t=tabs.find(t=>t.view.getWebContentsId()===s.id);
   if(t){t.running=s.running;updateStatus();}
 });
-(async()=>{
-  await initializeLicense();
-  if(document.body.classList.contains('auth-locked'))return;
+let appStarted=false;
+async function startApplication(){
+  if(appStarted)return;
+  appStarted=true;
   settings=await window.raidtalk.loadSettings();
   while(settings.length<COUNT)settings.push({x:500,y:400,interval:5000});
   makeTabs();selectTab(0);updateEffectsButton();updateDarkThemeButton();updateAutoRejoinButton();
@@ -542,4 +544,5 @@ window.raidtalk.onClickerState(s=>{
       }
     }
   },5000);
-})();
+}
+initializeLicense().catch(e=>authMessage('Ошибка авторизации: '+e.message));
