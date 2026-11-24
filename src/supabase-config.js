@@ -2,5 +2,5 @@
 window.ALBEDO_SUPABASE = Object.freeze({
   url: 'https://znnhrinsntvqrzwpgeel.supabase.co',
   publishableKey: 'sb_publishable_rMdEYqZFqZ2qOWBpuR0Xzw_4wtFrZtd',
-  licenseFunction: 'check-license'
+  licenseFunction: 'check-licens'
 });
