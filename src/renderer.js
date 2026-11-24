@@ -1,6 +1,7 @@
 const COUNT=20, START='https://app.raidtalk.ru';
 const SB=window.ALBEDO_SUPABASE;
 const SESSION_KEY='albedo-auth-session-v1';
+const AUTH_REDIRECT='albedo-raidtalk://auth/callback';
 let licenseSession=null;
 function authMessage(message){const el=$('auth-message');if(el)el.textContent=message;}
 async function sbRequest(path,options={}){
@@ -41,6 +42,26 @@ function showLicenseFailure(data){
   $('auth-logout').style.display='block';
   $('auth-logout').onclick=()=>{localStorage.removeItem(SESSION_KEY);licenseSession=null;location.reload();};
 }
+
+function handleAuthCallback(rawUrl){
+  try{
+    const parsed=new URL(rawUrl);
+    const params=new URLSearchParams(parsed.hash.replace(/^#/,'') || parsed.search.replace(/^\?/,''));
+    const errorCode=params.get('error_code'),errorDescription=params.get('error_description');
+    if(errorCode||params.get('error')){
+      if(errorCode==='otp_expired')authMessage('Ссылка подтверждения устарела или уже использована. Нажмите «Отправить письмо повторно» и откройте самое новое письмо.');
+      else authMessage('Не удалось подтвердить почту: '+(errorDescription||params.get('error')||'неизвестная ошибка').replace(/\+/g,' '));
+      return;
+    }
+    const access_token=params.get('access_token'),refresh_token=params.get('refresh_token');
+    if(!access_token){authMessage('Ссылка открыта, но Supabase не передал токен подтверждения. Запросите новое письмо.');return;}
+    const session={access_token,refresh_token,token_type:params.get('token_type')||'bearer',expires_in:Number(params.get('expires_in')||3600),expires_at:Math.floor(Date.now()/1000)+Number(params.get('expires_in')||3600),user:null};
+    saveSession(session);
+    authMessage('Почта подтверждена! Проверяем лицензию…');
+    finishLicenseLogin(session).catch(e=>authMessage('Почта подтверждена, но проверка лицензии не прошла: '+e.message));
+  }catch(e){authMessage('Не удалось обработать ссылку подтверждения: '+e.message);}
+}
+
 async function initializeLicense(){
   $('auth-login').onclick=async()=>{
     const email=$('auth-email').value.trim(),password=$('auth-password').value;
@@ -57,13 +78,20 @@ async function initializeLicense(){
     if(!email||password.length<8){authMessage('Введите Email и пароль не короче 8 символов.');return;}
     try{
       authMessage('Создаём аккаунт…');
-      const data=await sbRequest('/auth/v1/signup',{method:'POST',body:JSON.stringify({email,password})});
+      const data=await sbRequest('/auth/v1/signup?redirect_to='+encodeURIComponent(AUTH_REDIRECT),{method:'POST',body:JSON.stringify({email,password})});
       if(data.access_token){
         data.expires_at=Math.floor(Date.now()/1000)+(data.expires_in||3600);saveSession(data);
         await finishLicenseLogin(data);
-      }else authMessage('Аккаунт создан. Подтвердите Email по ссылке из письма, затем войдите.');
+      }else authMessage('Аккаунт создан. Откройте письмо и нажмите «Подтвердить почту». Программа откроется автоматически. Если письмо не пришло, проверьте папку «Спам».');
     }catch(e){authMessage(e.message);}
   };
+  $('auth-resend').onclick=async()=>{
+    const email=$('auth-email').value.trim();
+    if(!email){authMessage('Сначала укажите электронную почту.');return;}
+    try{authMessage('Отправляем новое письмо…');await sbRequest('/auth/v1/resend?redirect_to='+encodeURIComponent(AUTH_REDIRECT),{method:'POST',body:JSON.stringify({type:'signup',email})});authMessage('Новое письмо отправлено. Используйте только последнее письмо.');}
+    catch(e){authMessage('Не удалось отправить письмо: '+e.message);}
+  };
+  window.raidtalk.onAuthCallback(handleAuthCallback);
   const session=await refreshSession();
   if(session){try{await finishLicenseLogin(session);}catch(e){authMessage(e.message);}}
 }
