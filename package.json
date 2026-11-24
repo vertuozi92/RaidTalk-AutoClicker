@@ -53,6 +53,14 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "RaidTalk AutoClicker"
-    }
+    },
+    "protocols": [
+      {
+        "name": "ALBEDO RaidTalk authentication",
+        "schemes": [
+          "albedo-raidtalk"
+        ]
+      }
+    ]
   }
 }
