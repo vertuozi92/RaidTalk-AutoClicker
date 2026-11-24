@@ -45,14 +45,17 @@
           ]
         }
       ],
-      "artifactName": "RaidTalk-AutoClicker-Setup-${version}.${ext}"
+      "artifactName": "RaidTalk-AutoClicker-Setup-${version}.${ext}",
+      "icon": "build/icon.ico"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "RaidTalk AutoClicker"
+      "shortcutName": "RaidTalk AutoClicker",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico"
     },
     "protocols": [
       {
