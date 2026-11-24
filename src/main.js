@@ -138,11 +138,16 @@ function createWindow(){
 ipcMain.handle('open-external',async(_event,rawUrl)=>{
   try{
     const url=new URL(String(rawUrl));
-    if(url.protocol!=='https:'||url.hostname!=='yookassa.ru'&&!url.hostname.endsWith('.yookassa.ru'))
-      return {ok:false,error:'Разрешено открывать только страницы ЮKassa.'};
+    const host=url.hostname.toLowerCase();
+    const allowedHost=['yookassa.ru','yoomoney.ru'].some(domain=>host===domain||host.endsWith('.'+domain));
+    if(url.protocol!=='https:'||!allowedHost)
+      return {ok:false,error:'Платёжная ссылка имеет недопустимый адрес.'};
     await shell.openExternal(url.toString());
     return {ok:true};
-  }catch(e){return {ok:false,error:e.message};}
+  }catch(e){
+    console.error('open-external failed',e);
+    return {ok:false,error:e.message||'Не удалось открыть браузер.'};
+  }
 });
 ipcMain.handle('updater:check',async()=>{
   if(!app.isPackaged)return {ok:false,message:'Проверка обновлений доступна в установленной версии программы.'};
