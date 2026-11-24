@@ -25,7 +25,8 @@ webview.hidden{visibility:hidden;pointer-events:none}
 #auth-card{width:min(440px,100%);background:#171e2b;border:1px solid #35445b;border-radius:18px;padding:28px;box-shadow:0 24px 80px #0009}
 #auth-card h1{margin:0 0 7px;font-size:24px}#auth-card p{color:#aebbd0;line-height:1.5}
 #auth-card input{display:block;width:100%;margin:9px 0;padding:12px;background:#0e1420;color:#fff;border:1px solid #394a63;border-radius:8px}
-#auth-card button{width:100%;margin-top:9px;padding:12px}#auth-message{min-height:42px;color:#c9d7ec;font-size:13px;margin-top:12px}\n#auth-mail-note{margin-top:14px;padding:12px;border:1px solid #66552f;background:#292316;border-radius:9px;color:#e8d7aa;font-size:12px;line-height:1.5}#auth-mail-note strong{color:#ffe2a0}
+#auth-card button{width:100%;margin-top:9px;padding:12px}#auth-message{min-height:42px;color:#c9d7ec;font-size:13px;margin-top:12px}
+#auth-mail-note{margin-top:14px;padding:12px;border:1px solid #66552f;background:#292316;border-radius:9px;color:#e8d7aa;font-size:12px;line-height:1.5}#auth-mail-note strong{color:#ffe2a0}
 body.auth-locked header,body.auth-locked #browser-area{visibility:hidden}
 
 #auth-logout{margin-left:8px}
@@ -47,7 +48,8 @@ body.auth-locked header,body.auth-locked #browser-area{visibility:hidden}
   <p id="auth-intro">Войдите в аккаунт или создайте новый. После подтверждения электронной почты начнётся бесплатный период на 7 дней.</p>
   <input id="auth-email" type="email" autocomplete="username" placeholder="Электронная почта">
   <input id="auth-password" type="password" autocomplete="current-password" placeholder="Пароль (минимум 8 символов)">
-  <button id="auth-login" class="green">Войти</button>\n  <button id="license-open-auth" style="background:#8b6a1c">Лицензия и подписка</button>
+  <button id="auth-login" class="green">Войти</button>
+  <button id="license-open-auth" style="background:#8b6a1c">Лицензия и подписка</button>
   <button id="auth-signup">Создать аккаунт</button>
   <button id="auth-resend" style="background:#35445b">Отправить письмо повторно</button>
   <button id="auth-logout" style="display:none;background:#35445b">Выйти из аккаунта</button>
@@ -77,6 +79,7 @@ body.auth-locked header,body.auth-locked #browser-area{visibility:hidden}
   <span id="status">Инициализация…</span>
  </div>
 </header>
-<div id="browser-area"></div>\n<div id="license-modal" role="dialog" aria-modal="true" aria-labelledby="license-title"><div id="license-panel"><button id="license-close">Закрыть ✕</button><h2 id="license-title">Лицензия ALBEDO</h2><p id="license-status">Проверяем статус лицензии…</p><div class="license-plans"><div class="license-plan"><strong>30 дней</strong><div class="license-price">149 ₽</div><div class="license-muted">Полный доступ ко всем функциям</div><button disabled style="width:100%;margin-top:16px">Скоро</button></div><div class="license-plan"><strong>90 дней</strong><div class="license-price">399 ₽</div><div class="license-muted">Полный доступ ко всем функциям</div><button disabled style="width:100%;margin-top:16px">Скоро</button></div><div class="license-plan"><strong>365 дней</strong><div class="license-price">999 ₽</div><div class="license-muted">Полный доступ ко всем функциям</div><button disabled style="width:100%;margin-top:16px">Скоро</button></div></div><p class="license-muted">Оплата пока не подключена. Кнопки покупки станут активны после подключения платёжной системы.</p></div></div>
+<div id="browser-area"></div>
+<div id="license-modal" role="dialog" aria-modal="true" aria-labelledby="license-title"><div id="license-panel"><button id="license-close">Закрыть ✕</button><h2 id="license-title">Лицензия ALBEDO</h2><p id="license-status">Проверяем статус лицензии…</p><div class="license-plans"><div class="license-plan"><strong>30 дней</strong><div class="license-price">149 ₽</div><div class="license-muted">Полный доступ ко всем функциям</div><button disabled style="width:100%;margin-top:16px">Скоро</button></div><div class="license-plan"><strong>90 дней</strong><div class="license-price">399 ₽</div><div class="license-muted">Полный доступ ко всем функциям</div><button disabled style="width:100%;margin-top:16px">Скоро</button></div><div class="license-plan"><strong>365 дней</strong><div class="license-price">999 ₽</div><div class="license-muted">Полный доступ ко всем функциям</div><button disabled style="width:100%;margin-top:16px">Скоро</button></div></div><p class="license-muted">Оплата пока не подключена. Кнопки покупки станут активны после подключения платёжной системы.</p></div></div>
 <script src="supabase-config.js"></script><script src="renderer.js"></script>
 </body></html>
