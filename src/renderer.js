@@ -2,7 +2,8 @@ const COUNT=20, START='https://app.raidtalk.ru';
 const SB=window.ALBEDO_SUPABASE;
 const SESSION_KEY='albedo-auth-session-v1';
 const AUTH_REDIRECT='albedo-raidtalk://auth/callback';
-let licenseSession=null;\nlet currentLicense=null;
+let licenseSession=null;
+let currentLicense=null;
 function authMessage(message){
   const el=$('auth-message');if(!el)return;
   const raw=String(message||'');
@@ -105,6 +106,7 @@ async function finishLicenseLogin(session){
   licenseSession=session;
   authMessage('Проверяем лицензию…');
   const license=await verifyLicense(session);
+  currentLicense=license;
   if(!license.valid){showLicenseFailure(license);return;}
   document.body.classList.remove('auth-locked');
   $('auth-gate').style.display='none';
@@ -114,7 +116,8 @@ async function finishLicenseLogin(session){
   await startApplication();
 }
 
-const $=id=>document.getElementById(id);\n
+const $=id=>document.getElementById(id);
+
 // Subscription and license window (display-only until payments are connected).
 function openLicenseWindow(){
   const modal=$('license-modal');
