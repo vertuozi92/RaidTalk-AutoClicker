@@ -3,7 +3,13 @@ const SB=window.ALBEDO_SUPABASE;
 const SESSION_KEY='albedo-auth-session-v1';
 const AUTH_REDIRECT='albedo-raidtalk://auth/callback';
 let licenseSession=null;
-function authMessage(message){const el=$('auth-message');if(el)el.textContent=message;}
+function authMessage(message){
+  const el=$('auth-message');if(!el)return;
+  const raw=String(message||'');
+  el.textContent=/email rate limit exceeded/i.test(raw)
+    ? 'Превышен лимит отправки писем Supabase. Встроенная почта позволяет отправлять до 2 писем в час на весь проект. Подождите и попробуйте позже. Не запрашивайте письмо повторно много раз подряд.'
+    : raw;
+}
 async function sbRequest(path,options={}){
   const response=await fetch(SB.url+path,{...options,headers:{
     apikey:SB.publishableKey,'Content-Type':'application/json',
