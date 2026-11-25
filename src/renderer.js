@@ -278,6 +278,28 @@ svg, svg *, [class*="icon"], [class*="Icon"] {
 ::-webkit-scrollbar { background: #171c25 !important; width: 11px !important; height: 11px !important; }
 ::-webkit-scrollbar-thumb { background: #465064 !important; border: 2px solid #171c25 !important; border-radius: 8px !important; }
 ::-webkit-scrollbar-corner { background: #171c25 !important; }
+
+/* Нижняя панель RaidTalk и встроенные панели управления */
+footer, [class*="footer" i], [id*="footer" i],
+[class*="bottom" i], [id*="bottom" i],
+[class*="control" i], [id*="control" i],
+[class*="toolbar" i], [id*="toolbar" i],
+[class*="player" i], [id*="player" i],
+[style*="background: white" i], [style*="background-color: white" i],
+[style*="background:#fff" i], [style*="background: #fff" i],
+[style*="background-color:#fff" i], [style*="background-color: #fff" i] {
+  background: #191f2a !important;
+  background-color: #191f2a !important;
+  color: #e7eaf0 !important;
+  border-color: #343d4c !important;
+}
+input, textarea, select, button {
+  color-scheme: dark !important;
+}
+iframe {
+  color-scheme: dark !important;
+  background: #191f2a !important;
+}
 ::selection { background: #385b86 !important; color: #ffffff !important; }
 `;
 const effectKeys = new Map();
