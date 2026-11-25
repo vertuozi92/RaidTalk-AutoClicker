@@ -6,7 +6,7 @@
 
 # RaidTalk AutoClicker
 
-**Windows desktop workspace for RaidTalk with 20 browser tabs and per-tab auto-click settings.**
+**Windows desktop workspace for RaidTalk with 20 browser tabs, independent auto-clickers, theme switching and automatic page-effect reduction.**
 
 [![Latest Release](https://img.shields.io/github/v/release/vertuozi92/RaidTalk-AutoClicker?display_name=tag)](https://github.com/vertuozi92/RaidTalk-AutoClicker/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/vertuozi92/RaidTalk-AutoClicker/total)](https://github.com/vertuozi92/RaidTalk-AutoClicker/releases)
@@ -20,18 +20,27 @@
 
 ## Overview
 
-RaidTalk AutoClicker is an Electron desktop application that opens RaidTalk in a workspace of 20 tabs. Each tab has its own click coordinates and interval settings.
+RaidTalk AutoClicker is an Electron desktop application that opens RaidTalk in a workspace of 20 tabs. Every tab has its own click position, interval and controls. The app combines automated clicking with a customizable viewing experience.
 
 ## Features
 
-- **20 browser tabs** with independent per-tab settings
-- **Per-tab auto-clicker** with configurable coordinates and interval
-- **Page point picker** to select a click position
+### Browser workspace
+- **20 browser tabs** with independent settings
+- **Per-tab auto-clicker** with configurable screen coordinates and click interval
+- **Pick on page** to select the click position directly on the page
 - **Visual click indicator** to make click activity easier to see
-- **Dark page styling** and reduced page animations
-- **Tab controls** to refresh the current tab or all tabs
+- **Refresh controls** for the current tab and all tabs
+- **Auto-rejoin** option for returning to the selected RaidTalk group when the connection or session is interrupted
+
+### Appearance and performance
+- **Dark theme switch** — switch RaidTalk between the dark appearance and its original website theme
+- **Animations and visual effects disabled automatically** — the reduced-effects mode stays enabled; there is no separate effects toggle
+- The selected theme is applied across the browser tabs
+
+### Settings and licensing
 - **Local settings storage** between application sessions
-- **JSON backup and restore** for settings across all 20 tabs
+- **JSON export and import** for settings across all 20 tabs
+- **License and account window** with trial/status information
 - **Windows installer** built with electron-builder (NSIS)
 
 ## Download and install
@@ -41,7 +50,7 @@ RaidTalk AutoClicker is an Electron desktop application that opens RaidTalk in a
 3. Run the installer and follow the setup steps.
 4. Launch **RaidTalk AutoClicker** from the Start menu or desktop shortcut.
 
-**System:** Windows 10/11, 64-bit. An internet connection is required to load RaidTalk.
+**System:** Windows 10/11, 64-bit. An internet connection is required to load RaidTalk and use online account/license features.
 
 ## Run from source
 
@@ -70,7 +79,7 @@ src/
   main.js       Electron main process
   preload.js    Secure renderer bridge
   index.html    Application interface
-  renderer.js   Tabs, settings and clicker interface
+  renderer.js   Tabs, theme, settings and clicker interface
 package.json    Dependencies and build configuration
 ```
 
@@ -80,6 +89,7 @@ package.json    Dependencies and build configuration
 - Use the point picker only on a page area where clicking will not submit, purchase, delete, send, or otherwise trigger an unintended action.
 - The computer and application must remain running for background activity; a powered-off or sleeping computer cannot perform clicks.
 - Use the app only with accounts and pages you are authorized to access. It does not grant access to restricted groups or content.
+- Automatic group rejoin depends on RaidTalk availability and the current account/session state.
 
 ## Troubleshooting
 
