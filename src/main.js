@@ -120,7 +120,7 @@ function createWindow(){
   loadSettings();
   win = new BrowserWindow({
     width:1500,height:950,minWidth:1100,minHeight:720,
-    backgroundColor:'#10131b',title:'RaidTalk AutoClicker',
+    backgroundColor:'#10131b',title:'RaidTalk AutoClicker',icon:path.join(__dirname,'..','build','icon.ico'),
     webPreferences:{
       preload:path.join(__dirname,'preload.js'),
       contextIsolation:true,nodeIntegration:false,sandbox:true,
