@@ -200,7 +200,7 @@ $('license-refresh').onclick=async()=>{
 
 
 let selected=0, tabs=[], settings=[], readyCount=0;
-let effectsDisabled = localStorage.getItem('raidtalk-effects-disabled') !== 'false';
+const effectsDisabled = true;
 let darkThemeEnabled = localStorage.getItem('raidtalk-dark-theme') !== 'false';
 let autoRejoinEnabled = localStorage.getItem('raidtalk-auto-rejoin') !== 'false';
 const recoveryPending = Array(COUNT).fill(false);
@@ -304,23 +304,31 @@ iframe {
 `;
 const effectKeys = new Map();
 const darkThemeKeys = new Map();
-async function applyDarkTheme(view) {
-  if (!darkThemeEnabled || !view || !view.getWebContentsId()) return;
+async function applyPageStyle(view, styleId, css) {
+  if (!view || !view.getWebContentsId()) return;
   try {
-    const id = view.getWebContentsId();
-    const oldKey = darkThemeKeys.get(id);
-    if (oldKey) { try { await view.removeInsertedCSS(oldKey); } catch(e) {} }
-    const key = await view.insertCSS(DARK_THEME_CSS, {cssOrigin:'user'});
-    darkThemeKeys.set(id, key);
+    const payload = JSON.stringify(css);
+    await view.executeJavaScript(`(()=>{
+      let style=document.getElementById(${JSON.stringify(styleId)});
+      if(!style){
+        style=document.createElement('style');
+        style.id=${JSON.stringify(styleId)};
+        (document.head||document.documentElement).appendChild(style);
+      }
+      style.textContent=${payload};
+      return true;
+    })()`);
   } catch(e) {}
 }
+async function removePageStyle(view, styleId) {
+  if (!view || !view.getWebContentsId()) return;
+  try { await view.executeJavaScript(`document.getElementById(${JSON.stringify(styleId)})?.remove(); true`); } catch(e) {}
+}
+async function applyDarkTheme(view) {
+  if (darkThemeEnabled) await applyPageStyle(view, '__albedo_raidtalk_dark_theme', DARK_THEME_CSS);
+}
 async function removeDarkTheme(view) {
-  const id = view.getWebContentsId();
-  const key = darkThemeKeys.get(id);
-  if (key) {
-    try { await view.removeInsertedCSS(key); } catch(e) {}
-    darkThemeKeys.delete(id);
-  }
+  await removePageStyle(view, '__albedo_raidtalk_dark_theme');
 }
 function updateDarkThemeButton() {
   $('darkTheme').textContent = darkThemeEnabled ? 'Тёмная тема: ВКЛ' : 'Тёмная тема: ВЫКЛ';
@@ -328,24 +336,7 @@ function updateDarkThemeButton() {
   $('darkTheme').classList.toggle('green', !darkThemeEnabled);
 }
 async function applyEffects(view) {
-  if (!effectsDisabled || !view || !view.getWebContentsId()) return;
-  try {
-    const key = await view.insertCSS(EFFECTS_CSS, {cssOrigin:'user'});
-    effectKeys.set(view.getWebContentsId(), key);
-  } catch(e) {}
-}
-async function removeEffects(view) {
-  const id = view.getWebContentsId();
-  const key = effectKeys.get(id);
-  if (key) {
-    try { await view.removeInsertedCSS(key); } catch(e) {}
-    effectKeys.delete(id);
-  }
-}
-function updateEffectsButton() {
-  $('effects').textContent = effectsDisabled ? 'Эффекты: ВЫКЛ' : 'Эффекты: ВКЛ';
-  $('effects').classList.toggle('gold', effectsDisabled);
-  $('effects').classList.toggle('green', !effectsDisabled);
+  await applyPageStyle(view, '__albedo_raidtalk_disable_effects', EFFECTS_CSS);
 }
 const tabBar=$('tabs'), area=$('browser-area');
 
@@ -488,7 +479,7 @@ function makeTabs(){
     view.addEventListener('dom-ready',()=>{
       readyCount++;
       view.setAttribute('data-ready','1');
-      if (effectsDisabled) applyEffects(view);
+      applyEffects(view);
       if (darkThemeEnabled) applyDarkTheme(view);
       if (autoRejoinEnabled) {
         view.executeJavaScript(RECOVERY_MONITOR_JS).catch(()=>{});
@@ -573,17 +564,9 @@ $('darkTheme').onclick=async()=>{
     if(darkThemeEnabled) await applyDarkTheme(t.view);
     else await removeDarkTheme(t.view);
   }
-  $('status').textContent=darkThemeEnabled?'Тёмная тема страницы включена':'Тёмная тема страницы отключена';
-};
-$('effects').onclick=async()=>{
-  effectsDisabled=!effectsDisabled;
-  localStorage.setItem('raidtalk-effects-disabled', String(effectsDisabled));
-  updateEffectsButton();
-  for(const t of tabs){
-    if(effectsDisabled) await applyEffects(t.view);
-    else await removeEffects(t.view);
-  }
-  $('status').textContent=effectsDisabled?'Эффекты страницы отключены':'Эффекты страницы включены';
+  $('status').textContent=darkThemeEnabled
+    ? 'Тёмная тема RaidTalk включена'
+    : 'Оригинальная тема RaidTalk восстановлена';
 };
 $('reloadCurrent').onclick=()=>{
   const view=tabs[selected]?.view;
@@ -674,7 +657,7 @@ async function startApplication(){
   appStarted=true;
   settings=await window.raidtalk.loadSettings();
   while(settings.length<COUNT)settings.push({x:500,y:400,interval:5000});
-  makeTabs();selectTab(0);updateEffectsButton();updateDarkThemeButton();updateAutoRejoinButton();
+  makeTabs();selectTab(0);updateDarkThemeButton();updateAutoRejoinButton();
   setInterval(()=>{
     if(!autoRejoinEnabled||!navigator.onLine)return;
     for(let i=0;i<COUNT;i++){
