@@ -2,6 +2,11 @@ name: Build Windows installer
 
 on:
   workflow_dispatch:
+    inputs:
+      ref:
+        description: "Git tag or branch to build (for example: v1.4.0)"
+        required: true
+        default: "main"
   push:
     branches: [main]
     paths:
@@ -16,18 +21,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
       - name: Install dependencies
         run: npm install
-      - name: Build NSIS installer
+      - name: Build NSIS installer and update metadata
         run: npm run dist -- --publish never
-      - name: Upload installer
+      - name: Upload installer and update files
         uses: actions/upload-artifact@v4
         with:
           name: RaidTalk-AutoClicker-Windows-x64
-          path: release/*.exe
+          path: |
+            release/*.exe
+            release/latest.yml
+            release/*.blockmap
           if-no-files-found: error
           retention-days: 14
