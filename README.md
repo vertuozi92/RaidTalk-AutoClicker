@@ -2,7 +2,16 @@
 
 <img src="albedo-logo.png" alt="ALBEDO original logo" width="180">
 
-<img src="raidtalk-autoclicker-preview.png" alt="RaidTalk AutoClicker application screenshot" width="100%">
+<table>
+<tr>
+<td align="center" width="50%"><strong>Dark Theme</strong></td>
+<td align="center" width="50%"><strong>Original Theme</strong></td>
+</tr>
+<tr>
+<td width="50%"><img src="raidtalk-dark.jpg" alt="RaidTalk AutoClicker with dark theme" width="100%"></td>
+<td width="50%"><img src="raidtalk-light.jpg" alt="RaidTalk AutoClicker with original light theme" width="100%"></td>
+</tr>
+</table>
 
 # RaidTalk AutoClicker
 
