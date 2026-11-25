@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">RaidTalk AutoClicker</string>
+    <string name="accessibility_description">Выполняет нажатия по координатам только при активном окне приложения RaidTalk AutoClicker.</string>
+</resources>
