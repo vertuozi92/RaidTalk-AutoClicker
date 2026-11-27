@@ -112,4 +112,6 @@ Russian quick-start notes are available in [README_RU.txt](README_RU.txt).
 
 ## License
 
-This repository is currently marked **UNLICENSED**. All rights are reserved by the repository owner unless a separate license is added.
+The public desktop client is intended to be released under **GNU GPL-3.0-only** so users can study, modify, and redistribute client-side changes under the same license terms. The ALBEDO licensing/payment backend is maintained separately in the private [ALBEDO-License-Server](https://github.com/vertuozi92/ALBEDO-License-Server) repository and is not part of this client repository.
+
+The GPL license file and package metadata will be finalized after the repository history has been reviewed. Do not treat this README notice alone as a substitute for the license text.
