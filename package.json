@@ -4,7 +4,7 @@
   "description": "RaidTalk browser workspace with 20 persistent profiles, page click picker and GitHub auto-updates",
   "main": "src/main.js",
   "author": "ALBEDO",
-  "license": "UNLICENSED",
+  "license": "GPL-3.0-only",
   "scripts": {
     "start": "electron .",
     "dist": "electron-builder --win nsis",
